@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<title>Brain viewer</title>
+		<style>
+		    body{background-color:#111;}
+		    img, svg{height: 1406px; width:621px; position:absolute;top:0;left:0;}
+				img, svg {visibility: hidden;}
+				.visible {visibility: visible;}
+				g:hover {fill: rgba(255,200,200,0.2);}
+				.zone {fill: rgba(255,100,100,0.1);}
+				#control {position: relative; left: 800;}
+				p {color: white;}
+		</style>
+	</head>
+	<body>
+	<div id="app">
+			<!-- below this slices will be inserted -->
+	    $slices
+			<!-- below this SVGs will be inserted -->
+			$SVGs
+			<div id="control">
+			  <input type="range" min="1" max="138" v-model="current_layer_str" v-on:input="refreshRegion"/>
+				<p>{{region}}</p>
+			</div>
+	</div>
+
+	<script>
+
+	var app = new Vue({
+	  el: '#app',
+	  data: {
+	    region_names: undefined,
+			current_layer: 100,
+			current_layer_str: "100",
+			region: "",
+	  },
+		methods: {
+			loadRegion: function () {
+				self = this;
+				fetch('region-names.json')
+					.then(function (response) {
+						return response.json();
+					})
+					.then(function (data) {
+						self.region_names = data
+					})
+					.catch(function (err) {
+						console.log(err);
+					});
+			},
+			ztag: function (z) {
+				return "z-" + ('000' + z).substr(-3);
+			},
+			imgtag: function (z) {
+				return "img-" + ('000' + z).substr(-3);
+			},
+			xtag: function (z) {
+				return "x-" + ('000' + z).substr(-3);
+			},
+			toggleLayerVisibility: function (z) {
+				img = document.getElementById(this.imgtag(z));
+				svg = document.getElementById(this.ztag(z));
+				img.classList.toggle("visible");
+				svg.classList.toggle("visible");
+			},
+			seeLayer: function (z) {
+				this.toggleLayerVisibility(this.current_layer);
+				this.toggleLayerVisibility(z);
+				this.current_layer = z;
+			},
+			addEvent: function () {
+
+			},
+			refreshRegion: function () {
+				this.seeLayer(Number(this.current_layer_str));
+			},
+			selectRegion: function (xtag) {
+				this.region = this.region_names[xtag];
+			},
+		},
+	})
+
+	app.loadRegion();
+	app.toggleLayerVisibility(app.current_layer); // initial layer
+
+	function clickedOn(xtag) {
+		console.log("clicked on " + xtag);
+		app.selectRegion(xtag)
+	};
+
+	</script>
+
+	</body>
+</html>
