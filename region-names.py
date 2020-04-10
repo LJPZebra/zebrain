@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import json
 
 # transform region_names.txt in region_names.json

@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import xml.etree.ElementTree as ET
 import os
 import glob
@@ -5,8 +7,10 @@ import glob
 # set root namespace to svg
 ET.register_namespace('', 'http://www.w3.org/2000/svg')
 
-# source path
-source = "svg/"
+# source and dest path
+source = "SVG/"
+dest = "EXTRACT/"
+os.mkdir(dest)
 
 # run across layers
 for z in range(1,139):
@@ -31,4 +35,4 @@ for z in range(1,139):
         svg.append(g)
     # output file
     SVG = ET.ElementTree(element=svg)
-    SVG.write(f'output/layer_{ztag}.svg', 'utf-8')
+    SVG.write(f'{dest}layer_{ztag}.svg', 'utf-8')

@@ -1,26 +1,58 @@
 %% export masks as png
 
-load('MaskDatabase.mat');
-cd('MATLAB');
+load MaskDatabase.mat
+mkdir PNG
+cd PNG
 
-for z = 1:138 % for each layer
-for i = 1:294 % for each part
-    mask = zeros(1406,621,138);
-    mask(MaskDatabase(:,i)) = 1;
-    img = mask(:,:,z);
-    if max(img(:)) > 0
-        disp(MaskDatabaseNames{i});
-        file = [num2str(z, '%03d') ' ' num2str(i, '%03d') ' ' MaskDatabaseNames{i} '.png'];
-        file = replace(file, '/', '-');
-        imwrite(img, file);
-    end   
+% --- for each brain region ---
+for i = 1:294
+    region = MaskDatabaseNames{i};      % get region name
+    disp(region);                       % displays it
+    mask = false(1406,621,138);         % initialize empty mask
+    mask(MaskDatabase(:,i)) = true;     % select corresponding region
+    % --- for each layer ---
+    for z = 1:138 
+        img = mask(:,:,z);              % use given layer
+        if max(img(:))                  % if the layer contains a part of the region
+            fprintf("%d, ", z);         % displays layer number
+                                        % define filename and replace slashes inside it
+            file = [num2str(z, '%03d') ' ' num2str(i, '%03d') ' ' MaskDatabaseNames{i} '.png'];
+            file = replace(file, '/', '-');
+            imwrite(img, file);         % write the b&w image
+        end   
+    end
+    fprintf("\n");                      % linebreak
 end
-end
+% at this point, there should be 7645 images in the PNG folder
 
 %% export region names correspondence table 
+
+cd ..
 
 fid = fopen('region-names.txt', 'w');
 for i = 1:294
     fprintf(fid, '%03d\t%s\n', i, MaskDatabaseNames{i});
 end
-fclose(fid);table
+fclose(fid);
+
+%% [optional] export masks of projected regions
+
+mkdir PROJ
+cd PROJ
+
+for i = 1:294
+    region = MaskDatabaseNames{i};      % get region name
+    disp(region);                       % displays it
+    mask = false(1406,621,138);         % initialize empty mask
+    mask(MaskDatabase(:,i)) = true;     % select corresponding region
+    % --- projection ---
+    img = max(mask, [], 3);
+    % define filename and replace slashes inside it
+    file = [num2str(i, '%03d') ' ' MaskDatabaseNames{i} '.png'];
+    file = replace(file, '/', '-');
+    imwrite(img, file);                 % write the b&w image
+end
+
+
+
+

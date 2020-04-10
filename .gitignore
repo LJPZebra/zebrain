@@ -1,7 +1,9 @@
-masks
-output
-slices
-svg
-brain.html
+EXTRACT
+JPEG
+PNG
+SVG
+Ref20131120pt14pl2.nrrd
+MaskDatabase.mat
+index.html
 region-names.json
 region-names.txt
