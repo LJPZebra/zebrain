@@ -1,9 +1,12 @@
 %% export masks as png
 
 load MaskDatabase.mat
+
+%%
 mkdir PNG
 cd PNG
 
+%%
 % --- for each brain region ---
 for i = 1:294
     region = MaskDatabaseNames{i};      % get region name
@@ -35,7 +38,7 @@ for i = 1:294
 end
 fclose(fid);
 
-%% [optional] export masks of projected regions
+%% [optional] export masks of vertically projected regions
 
 mkdir PROJ
 cd PROJ
@@ -47,6 +50,28 @@ for i = 1:294
     mask(MaskDatabase(:,i)) = true;     % select corresponding region
     % --- projection ---
     img = max(mask, [], 3);
+    % define filename and replace slashes inside it
+    file = [num2str(i, '%03d') ' ' MaskDatabaseNames{i} '.png'];
+    file = replace(file, '/', '-');
+    imwrite(img, file);                 % write the b&w image
+end
+
+%% [optional] export masks of horizontally projected regions
+
+mkdir HPROJ
+cd HPROJ
+
+fac = 1.2531/0.798; % size of layer interval in horizontal pixel
+imwidth = round(138*fac); % width of the image in horizontal pixel
+
+for i = 1:294
+    region = MaskDatabaseNames{i};      % get region name
+    disp(region);                       % displays it
+    mask = false(1406,621,138);         % initialize empty mask
+    mask(MaskDatabase(:,i)) = true;     % select corresponding region
+    % --- projection ---
+    img = squeeze(max(mask, [], 2));
+    img = imresize(img, [1406,imwidth]);
     % define filename and replace slashes inside it
     file = [num2str(i, '%03d') ' ' MaskDatabaseNames{i} '.png'];
     file = replace(file, '/', '-');
