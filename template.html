@@ -12,6 +12,7 @@
 			.visible {visibility: visible;}
 			g:hover {fill: rgba(255,255,50,0.2);}
 			.zone {
+				display: none;
 				fill: none;
 				stroke: rgba(255,50,50,0.2);
 				stroke-width: 35;
@@ -22,22 +23,33 @@
 		</style>
 	</head>
 	<body>
+	<script>
+
+	// return zero padded integer
+	function zeropad(n) {
+		return ('000' + n).substr(-3)
+	}
+
+	</script>
+
+
 	<div id="app">
 			<!-- below this slices will be inserted -->
 	    	$slices
 			<!-- below this SVGs will be inserted -->
 			$SVGs
+			<!-- layer selector -->
 			<div id="control">
-				<input type="range" min="0" max="137" v-model="current_layer_str" v-on:input="refreshRegion"/>
+				<input type="range" min="0" max="137" v-model="current_layer_str" v-on:input="refreshLayer"/>
 				<p>{{region}}</p>
 			</div>
 			<!-- region selector -->
 			<div id="toggle-region">
-				<input type="text" v-model="region_on_str" v-on:change="parseToggleRegion"/>
+				<input type="text" v-model="region_on_str" v-on:keyup.enter="parseToggleRegion"/>
 				<div id="checkboxes">
 					<div class="checkbox" v-for="(region, index) in Object.entries(region_names)">
-						<input type="checkbox" :value="region[0]" :name="region[0]" />
-						<label :for="region[0]">{{index}} {{region[1]}}</label><br>
+						<input type="checkbox" :value="region[0]" :name="region[0]" v-model="region_on"/>
+						<label :for="region[0]">{{zeropad(index+1)}} {{region[1]}}</label><br>
 					</div>
 				</div>
 			</div>
@@ -46,23 +58,21 @@
 
 	<script>
 
-	// return zero padded integer
-	function zeropad(n) {
-		return ('000' + n).substr(-3)
-	}
-
 	// the app
 	var app = new Vue({
 		el: '#app',
 		data: {
-			region_names: {},			// dictionary mapping tag to region name
+			region_names: {},					// dictionary mapping tag to region name
 			current_layer: 99,					// current layer (0 to 137)
 			current_layer_str: "99",			// current layer (string version)
-			region: "",							// current region name
-			region_on: [],						// list of layers turned on
-			region_on_str: "", 					// list of layers turned on (string version)
+			region: ".",						// current region name
+			region_on: [],						// list of layers turned on ["x-000", "x-050"..;]
+			region_on_str: "all", 				// list of layers turned on (string version)
+			sheet: undefined, 					// stylesheet for layers
 		},
 		methods: {
+			// zeropad binding
+			zeropad: zeropad,
 			// get region names at the program start
 			loadRegion: function () {
 				self = this;
@@ -102,28 +112,65 @@
 				this.toggleLayerVisibility(z);
 				this.current_layer = z;
 			},
-			addEvent: function () {
-
-			},
 			// callback function for slider
-			refreshRegion: function () {
+			refreshLayer: function () {
 				this.seeLayer(Number(this.current_layer_str));
 			},
 			// callback function when clicked on a region
 			selectRegion: function (xtag) {
-				this.region = this.region_names[xtag];
+				this.region = xtag + " " + this.region_names[xtag];
 			},
 			// callback function when changed region list
 			parseToggleRegion: function () {
-				// TODO default to all
-				// allow keywords
-				// or parse list of space separated int
+				switch(this.region_on_str) {
+					case "none": // no region selected
+						this.region_on = []
+					break;
+					case "all": // all regions selected
+						this.region_on = []
+						for(i=1;i<=294;i++) {
+							this.region_on.push("x-" + zeropad(i))
+						}
+					break;
+					default:
+						this.region_on = [] // empty region list
+						list_str = this.region_on_str.split(" ") // split space separated numbers
+						list_num = list_str.map(x=>this.region_on.push(this.xtag(Number(x)))) // parse as numbers and put in region_on
+						
+					break;
+				}
+			},
+			// initialize stylesheet
+			initStyle: function () {
+				var style = document.createElement("style")
+				document.head.appendChild(style)
+				this.sheet = style.sheet
+			},
+			// refresh regions to display
+			refreshRegionVisibility: function () {
+				// empty stylesheet
+				l = this.sheet.rules.length
+				for(i=0;i<l;i++) {
+					this.sheet.deleteRule(0)
+				}
+				// fill stylesheet
+				this.region_on.forEach(xtag => {
+					this.sheet.insertRule("." + xtag + "{display:block}")
+				});
+			},
+		},
+		watch: {
+			// when region_on changes, update the stylesheet (TODO optimize this)
+			region_on: function () {
+				this.refreshRegionVisibility()
 			},
 		},
 	})
 
-	app.loadRegion(); // get region names
-	app.toggleLayerVisibility(app.current_layer); // initial layer
+	app.loadRegion(); 								// get region names
+	app.toggleLayerVisibility(app.current_layer); 	// initial layer
+	app.parseToggleRegion(); 						// set initial region list
+	app.initStyle(); 								// initialize stylesheet
 
 	// callback function for svg element telling it's tag
 	function clickedOn(xtag) {
