@@ -5,22 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 		<title>Brain viewer</title>
-		<style>
-		    body{background-color:#AAA;}
-		    img, svg{height: 1406px; width:621px; position:absolute;top:0;left:0;}
-			img, svg {visibility: hidden;}
-			.visible {visibility: visible;}
-			g:hover {fill: rgba(255,255,50,0.4);}
-			.zone {
-				display: none;
-				fill: none;
-				stroke: rgba(255,50,50,0.8);
-				stroke-width: 35;
-			}
-			#control {position: relative; left: 650px;}
-			p {color: white;}
-			#toggle-region {position: relative; left: 650px;}
-		</style>
+		<link rel="stylesheet" type="text/css" href="./style.css"/>
 	</head>
 	<body>
 	<script>
@@ -32,20 +17,23 @@
 
 	</script>
 
+	<div id="images">
+		<div id="preload"></div>
+		<!-- below this slices will be inserted -->
+		$slices
+		<!-- below this SVGs will be inserted -->
+		$SVGs
+	</div>
 
 	<div id="app">
-			<!-- below this slices will be inserted -->
-	    	$slices
-			<!-- below this SVGs will be inserted -->
-			$SVGs
 			<!-- layer selector -->
-			<div id="control">
-				<input type="range" min="0" max="137" v-model="current_layer_str" v-on:input="refreshLayer"/>
+			<div id="layer-control">
+				<input id="layer-slider" type="range" min="0" max="137" v-model="current_layer_str" v-on:input="refreshLayer"/>
 				<p>{{region}}</p>
 			</div>
 			<!-- region selector -->
 			<div id="toggle-region">
-				<input type="text" v-model="region_on_str" v-on:keyup.enter="parseToggleRegion"/>
+				<input id="region-input" type="text" v-model="region_on_str" v-on:keyup.enter="parseToggleRegion"/>
 				<div id="checkboxes">
 					<div class="checkbox" v-for="(region, index) in Object.entries(region_names)">
 						<input type="checkbox" :value="region[0]" :name="region[0]" v-model="region_on"/>
@@ -65,7 +53,7 @@
 			region_names: {},					// dictionary mapping tag to region name
 			current_layer: 99,					// current layer (0 to 137)
 			current_layer_str: "99",			// current layer (string version)
-			region: ".",						// current region name
+			region: "--- hover a region ---",	// current region name
 			region_on: [],						// list of layers turned on ["x-000", "x-050"..;]
 			region_on_str: "all", 				// list of layers turned on (string version)
 			sheet: undefined, 					// stylesheet for layers

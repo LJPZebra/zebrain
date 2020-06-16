@@ -32,7 +32,7 @@ for z in range(138): # from 0 to 137
         # g.attrib.update({"fill": "rgba(0,0,0,0.5)", "id": f"x-{xtag}"})
         g.attrib.pop("fill")
         g.attrib.pop("stroke")
-        g.attrib.update({"class": f"zone x-{xtag}", "onclick": f"""clickedOn('x-{xtag}')"""}) # OPTI move onclick to JS ?
+        g.attrib.update({"class": f"zone x-{xtag}", "onmouseover": f"""clickedOn('x-{xtag}')"""}) # OPTI move onclick to JS ?
         svg.append(g)
     # output file
     SVG = ET.ElementTree(element=svg)

@@ -1,0 +1,22 @@
+/* layout */
+body{background-color:#DDD; overflow: hidden; margin:0;}
+#images {height: 100vh; width:636px; overflow-y: scroll; position: relative;}
+#preload {height: 1406px; width: 621px; background-image: url("./JPEG/layer099.jpg")}
+img, svg{height: 1406px; width:621px; position:absolute; top:0;left:0;}
+img, svg {visibility: hidden;}
+.visible {visibility: visible;}
+/* #images img, #images svg {height: 1406px; width:621px; position:absolute; top:0; left:0; visibility: hidden;}
+.visible {visibility: visible;} */
+
+#app {position: absolute; top:0px; left:650px;}
+#layer-slider {width: 500px;}
+#region-input {width: 400px;}
+#checkboxes {height: 1300px; width:calc(100vw - 650px); overflow: scroll;}
+/* style */
+g:hover {fill: rgba(255,255,255,0.6);}
+.zone {
+    display: none;
+    fill: none;
+    stroke: rgba(255,0,0,0.8);
+    stroke-width: 30px;
+}
