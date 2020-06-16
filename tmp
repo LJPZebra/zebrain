@@ -1,6 +1,0 @@
-<div id="toogle-layers">
-  <input type="text" v-model="current_layers_on" v-on:change="parseToogleLayers"/>
-  <div id="checkboxes">
-    <input v-for="(region, index) in region_names" type="checkbox" value="region"/>
-  </div>
-</div>

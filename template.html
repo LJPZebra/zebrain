@@ -6,43 +6,64 @@
 		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 		<title>Brain viewer</title>
 		<style>
-		    body{background-color:#111;}
+		    body{background-color:#AAA;}
 		    img, svg{height: 1406px; width:621px; position:absolute;top:0;left:0;}
-				img, svg {visibility: hidden;}
-				.visible {visibility: visible;}
-				g:hover {fill: rgba(255,255,50,0.2);}
-				.zone {
-					fill: none;
-					stroke: rgba(255,50,50,0.2);
-					stroke-width: 35;
-				}
-				#control {position: relative; left: 800;}
-				p {color: white;}
+			img, svg {visibility: hidden;}
+			.visible {visibility: visible;}
+			g:hover {fill: rgba(255,255,50,0.2);}
+			.zone {
+				fill: none;
+				stroke: rgba(255,50,50,0.2);
+				stroke-width: 35;
+			}
+			#control {position: relative; left: 650px;}
+			p {color: white;}
+			#toggle-region {position: relative; left: 650px;}
 		</style>
 	</head>
 	<body>
 	<div id="app">
 			<!-- below this slices will be inserted -->
-	    $slices
+	    	$slices
 			<!-- below this SVGs will be inserted -->
 			$SVGs
 			<div id="control">
-			  <input type="range" min="1" max="138" v-model="current_layer_str" v-on:input="refreshRegion"/>
+				<input type="range" min="0" max="137" v-model="current_layer_str" v-on:input="refreshRegion"/>
 				<p>{{region}}</p>
 			</div>
+			<!-- region selector -->
+			<div id="toggle-region">
+				<input type="text" v-model="region_on_str" v-on:change="parseToggleRegion"/>
+				<div id="checkboxes">
+					<div class="checkbox" v-for="(region, index) in Object.entries(region_names)">
+						<input type="checkbox" :value="region[0]" :name="region[0]" />
+						<label :for="region[0]">{{index}} {{region[1]}}</label><br>
+					</div>
+				</div>
+			</div>
+			  
 	</div>
 
 	<script>
 
+	// return zero padded integer
+	function zeropad(n) {
+		return ('000' + n).substr(-3)
+	}
+
+	// the app
 	var app = new Vue({
-	  el: '#app',
-	  data: {
-	    region_names: undefined,
-			current_layer: 100,
-			current_layer_str: "100",
-			region: "",
-	  },
+		el: '#app',
+		data: {
+			region_names: {},			// dictionary mapping tag to region name
+			current_layer: 99,					// current layer (0 to 137)
+			current_layer_str: "99",			// current layer (string version)
+			region: "",							// current region name
+			region_on: [],						// list of layers turned on
+			region_on_str: "", 					// list of layers turned on (string version)
+		},
 		methods: {
+			// get region names at the program start
 			loadRegion: function () {
 				self = this;
 				fetch('region-names.json')
@@ -56,21 +77,26 @@
 						console.log(err);
 					});
 			},
+			// return tag corresponding to svg layer z (0 to 137)
 			ztag: function (z) {
-				return "z-" + ('000' + z).substr(-3);
+				return "z-" + zeropad(z);
 			},
+			// return tag corresponding to background image layer z (0 to 137)
 			imgtag: function (z) {
-				return "img-" + ('000' + z).substr(-3);
+				return "img-" + zeropad(z);
 			},
-			xtag: function (z) {
-				return "x-" + ('000' + z).substr(-3);
+			// return tag corresponding to region x (1 to 294)
+			xtag: function (x) {
+				return "x-" + zeropad(x);
 			},
+			// toogle visibility of layer z
 			toggleLayerVisibility: function (z) {
 				img = document.getElementById(this.imgtag(z));
 				svg = document.getElementById(this.ztag(z));
 				img.classList.toggle("visible");
 				svg.classList.toggle("visible");
 			},
+			// switch current view to layer z
 			seeLayer: function (z) {
 				this.toggleLayerVisibility(this.current_layer);
 				this.toggleLayerVisibility(z);
@@ -79,18 +105,27 @@
 			addEvent: function () {
 
 			},
+			// callback function for slider
 			refreshRegion: function () {
 				this.seeLayer(Number(this.current_layer_str));
 			},
+			// callback function when clicked on a region
 			selectRegion: function (xtag) {
 				this.region = this.region_names[xtag];
+			},
+			// callback function when changed region list
+			parseToggleRegion: function () {
+				// TODO default to all
+				// allow keywords
+				// or parse list of space separated int
 			},
 		},
 	})
 
-	app.loadRegion();
+	app.loadRegion(); // get region names
 	app.toggleLayerVisibility(app.current_layer); // initial layer
 
+	// callback function for svg element telling it's tag
 	function clickedOn(xtag) {
 		console.log("clicked on " + xtag);
 		app.selectRegion(xtag)

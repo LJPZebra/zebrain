@@ -3,11 +3,11 @@
 from string import Template
 
 sourcedir = "EXTRACT"
-catimg ="" # emtpy string for concatenating imgs
+catimg = "" # emtpy string for concatenating imgs
 catsvg = "" # empty string for concatenating svgs
 
 for z in range(138): # layer 000 ... 137
-    catimg += f"""<img id="img-{z:03d}" src="./JPEG/layer{z-1:03d}.jpg"/>\n"""
+    catimg += f"""<img id="img-{z:03d}" src="./JPEG/layer{z:03d}.jpg"/>\n"""
     with open(f"{sourcedir}/layer_{z:03d}.svg") as svg:
         catsvg += svg.read() + "\n"
 
