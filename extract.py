@@ -13,7 +13,7 @@ dest = "EXTRACT/"
 os.mkdir(dest)
 
 # run across layers
-for z in range(1,139):
+for z in range(1,139): # z is counted from 1 to 138
     # create a svg for this layer
     ztag = f"{z:03d}"
     svg = ET.Element('svg')
@@ -35,4 +35,4 @@ for z in range(1,139):
         svg.append(g)
     # output file
     SVG = ET.ElementTree(element=svg)
-    SVG.write(f'{dest}layer_{ztag}.svg', 'utf-8')
+    SVG.write(f'{dest}layer_{z-1:03d}.svg', 'utf-8') # then cound z from 0 to 137
