@@ -132,6 +132,9 @@
 							this.region_on.push("x-" + zeropad(i))
 						}
 					break;
+					case "vestibular":
+						this.region_on = ["x-015", "x-078", "x-097", "x-098", "x-106", "x-108", "x-109", "x-131", "x-175", "x-201", "x-235", "x-238"]
+						break;
 					default:
 						this.region_on = [] // empty region list
 						list_str = this.region_on_str.split(" ") // split space separated numbers
