@@ -5,13 +5,11 @@ body{background-color:#DDD; overflow: hidden; margin:0;}
 img, svg{height: 1406px; width:621px; position:absolute; top:0;left:0;}
 img, svg {visibility: hidden;}
 .visible {visibility: visible;}
-/* #images img, #images svg {height: 1406px; width:621px; position:absolute; top:0; left:0; visibility: hidden;}
-.visible {visibility: visible;} */
-
-#app {position: absolute; top:0px; left:650px;}
+#app {position: absolute; top:0px; left:650px; height: 100vh;}
 #layer-slider {width: 500px;}
 #region-input {width: 400px;}
-#checkboxes {height: 1300px; width:calc(100vw - 650px); overflow: scroll;}
+#checkboxes {height: calc(100vh - 100px); width:calc(100vw - 650px); overflow-y: scroll; overflow-x: auto;}
+
 /* style */
 g:hover {fill: rgba(255,255,255,0.6);}
 .zone {
@@ -20,3 +18,4 @@ g:hover {fill: rgba(255,255,255,0.6);}
     stroke: rgba(255,0,0,0.8);
     stroke-width: 30px;
 }
+.region-number {color: #0274fe; cursor: pointer;}

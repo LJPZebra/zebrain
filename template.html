@@ -28,7 +28,7 @@
 	<div id="app">
 			<!-- layer selector -->
 			<div id="layer-control">
-				<input id="layer-slider" type="range" min="0" max="137" v-model="current_layer_str" v-on:input="refreshLayer"/>
+				<input id="layer-slider" type="range" min="0" max="137" v-model.number="goto_layer" v-on:input="refreshLayer"/>
 				<p>{{region}}</p>
 			</div>
 			<!-- region selector -->
@@ -37,7 +37,7 @@
 				<div id="checkboxes">
 					<div class="checkbox" v-for="(region, index) in Object.entries(region_names)">
 						<input type="checkbox" :value="region[0]" :name="region[0]" v-model="region_on"/>
-						<label :for="region[0]">{{zeropad(index+1)}} {{region[1]}}</label><br>
+						<label :for="region[0]"><span v-on:click="gotomiddle(index+1)" class="region-number">{{zeropad(index+1)}}</span> {{region[1]}}</label><br>
 					</div>
 				</div>
 			</div>
@@ -51,8 +51,9 @@
 		el: '#app',
 		data: {
 			region_names: {},					// dictionary mapping tag to region name
+			region_center: {},					// dictionary mapping region number to region center layer
 			current_layer: 99,					// current layer (0 to 137)
-			current_layer_str: "99",			// current layer (string version)
+			goto_layer: 99,						// next current layer
 			region: "--- hover a region ---",	// current region name
 			region_on: [],						// list of layers turned on ["x-000", "x-050"..;]
 			region_on_str: "all", 				// list of layers turned on (string version)
@@ -70,6 +71,16 @@
 					})
 					.then(function (data) {
 						self.region_names = data
+					})
+					.catch(function (err) {
+						console.log(err);
+					});
+				fetch('region-center.json')
+					.then(function (response) {
+						return response.json();
+					})
+					.then(function (data) {
+						self.region_center = data.region_center
 					})
 					.catch(function (err) {
 						console.log(err);
@@ -95,14 +106,14 @@
 				svg.classList.toggle("visible");
 			},
 			// switch current view to layer z
-			seeLayer: function (z) {
-				this.toggleLayerVisibility(this.current_layer);
-				this.toggleLayerVisibility(z);
-				this.current_layer = z;
+			seeLayer: function (gotolayer) {
+				this.toggleLayerVisibility(this.current_layer); // turn of current layer visibility
+				this.toggleLayerVisibility(gotolayer); // turn on goto layer visibility
+				this.current_layer = gotolayer; // update current layer with goto layer
 			},
 			// callback function for slider
 			refreshLayer: function () {
-				this.seeLayer(Number(this.current_layer_str));
+				this.seeLayer(this.goto_layer);
 			},
 			// callback function when clicked on a region
 			selectRegion: function (xtag) {
@@ -148,6 +159,11 @@
 				this.region_on.forEach(xtag => {
 					this.sheet.insertRule("." + xtag + "{display:block}")
 				});
+			},
+			// go to middle of region number n
+			gotomiddle: function(n) {
+				this.goto_layer = this.region_center[n]
+				this.refreshLayer()
 			},
 		},
 		watch: {
