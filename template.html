@@ -20,28 +20,32 @@
 	<div id="images">
 		<div id="preload"></div>
 		<!-- below this slices will be inserted -->
-		$slices
+		<div id="slices">$slices</div>
 		<!-- below this SVGs will be inserted -->
-		$SVGs
+		<div id="svgs">$SVGs</div>
 	</div>
 
 	<div id="app">
-			<!-- layer selector -->
-			<div id="layer-control">
-				<input id="layer-slider" type="range" min="0" max="137" v-model.number="goto_layer" v-on:input="refreshLayer"/>
-				<p>{{region}}</p>
-			</div>
-			<!-- region selector -->
-			<div id="toggle-region">
-				<input id="region-input" type="text" v-model="region_on_str" v-on:keyup.enter="parseToggleRegion"/>
-				<div id="checkboxes">
-					<div class="checkbox" v-for="(region, index) in Object.entries(region_names)">
-						<input type="checkbox" :value="region[0]" :name="region[0]" v-model="region_on"/>
-						<label :for="region[0]"><span v-on:click="gotomiddle(index+1)" class="region-number">{{zeropad(index+1)}}</span> {{region[1]}}</label><br>
-					</div>
+		<!-- layer selector -->
+		<div id="layer-control">
+			<input id="layer-slider" name="layer-slider" type="range" min="0" max="137" v-model.number="goto_layer" v-on:input="refreshLayer"/>
+			<label for="layer-slider">current layer: <strong>{{zeropad(current_layer+1)}}</strong></label>
+			<div>current region: <strong>{{region}}</strong></div>
+		</div>
+		<div id="info">
+			<label for="image">select background images</label>
+			<input type="file" id="image" name="image" accept="image/png, image/jpeg" multiple @change="addedFile">
+		</div>
+		<!-- region selector -->
+		<div id="toggle-region">
+			<input id="region-input" type="text" v-model="region_on_str" v-on:keyup.enter="parseToggleRegion"/>
+			<div id="checkboxes">
+				<div class="checkbox" v-for="(region, index) in Object.entries(region_names)">
+					<input type="checkbox" :value="region[0]" :name="region[0]" v-model="region_on"/>
+					<label :for="region[0]"><span v-on:click="gotomiddle(index+1)" class="region-number">{{zeropad(index+1)}}</span> {{region[1]}}</label><br>
 				</div>
 			</div>
-			  
+		</div>
 	</div>
 
 	<script>
@@ -164,6 +168,15 @@
 			gotomiddle: function(n) {
 				this.goto_layer = this.region_center[n]
 				this.refreshLayer()
+			},
+			// when new background images are loaded
+			addedFile(event) {
+				files = event.target.files
+				for(i=0;i<138;i++) {
+					f = files[i]
+					img = document.getElementById(this.imgtag(i));
+					img.src = URL.createObjectURL(f)
+				}
 			},
 		},
 		watch: {
