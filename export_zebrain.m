@@ -1,12 +1,12 @@
-%% export masks as png
+%% import mask database
 
+cd zebrain % go to your copy of the code
 load MaskDatabase.mat
 
-%%
+%% export brain slices as PNG b&w images, 1px = 1px = 0.798 µm
 mkdir PNG
 cd PNG
 
-%%
 % --- for each brain region ---
 for i = 1:294
     region = MaskDatabaseNames{i};      % get region name
@@ -28,9 +28,9 @@ for i = 1:294
 end
 % at this point, there should be 7645 images in the PNG folder
 
-%% export region names correspondence table 
-
 cd ..
+
+%% export region names correspondance table 
 
 fid = fopen('region-names.txt', 'w');
 for i = 1:294
@@ -38,7 +38,7 @@ for i = 1:294
 end
 fclose(fid);
 
-%% [optional] export masks of vertically projected regions
+%% [optional] export masks of vertically projected regions 1px = 0.3988 layer = 0.7977 µm
 
 mkdir PROJ
 cd PROJ
@@ -56,12 +56,14 @@ for i = 1:294
     imwrite(img, file);                 % write the b&w image
 end
 
+cd ..
+
 %% [optional] export masks of horizontally projected regions
 
 mkdir HPROJ
 cd HPROJ
 
-fac = 1.2531/0.798; % size of layer interval in horizontal pixel
+fac = 2.0/0.798; % size of layer interval in horizontal pixel
 imwidth = round(138*fac); % width of the image in horizontal pixel
 
 for i = 1:294
@@ -78,6 +80,5 @@ for i = 1:294
     imwrite(img, file);                 % write the b&w image
 end
 
-
-
+cd ..
 
