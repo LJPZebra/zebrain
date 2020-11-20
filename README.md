@@ -4,13 +4,9 @@ This is a really simple code to make the interface available at [http://wiki.ljp
 
 ## Interface usage
 
-Use the slider to scroll between layers. Hover your mouse over a contour to display it's area. In the text area, enter a list of space-separated integers corresponding to regions. Also allows keywords like "all", "none" and "vestibular" to display a pre-defined set of regions. Every feature is presented on this annotated screenshot.
+Use the slider to scroll between layers. Hover your mouse over a contour to display it's area. In the text area, enter a list of space-separated integers corresponding to regions. Also allows keywords like "all", "none" and "vestibular" to display a pre-defined set of regions. Every feature is presented on this annotated screenshot. The interface is designed to be light and readable even on a small screen.
 
 [![screenshot](./screenshot.svg.png)](http://wiki.ljp.upmc.fr/zebrain/)
-
-The interface is designed to be light and readable even on a small screen. It can be used offline.
-
-
 
 ## Script usage
 

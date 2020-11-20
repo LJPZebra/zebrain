@@ -16,7 +16,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="screenshot.svg">
+   sodipodi:docname="screenshot.svg"
+   inkscape:export-filename="/home/ljp/Documents/zebrain/screenshot.svg.png"
+   inkscape:export-xdpi="173.42787"
+   inkscape:export-ydpi="173.42787">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -26,9 +29,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="339.67046"
-     inkscape:cy="333.0422"
+     inkscape:zoom="1"
+     inkscape:cx="353.16012"
+     inkscape:cy="330.09438"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
